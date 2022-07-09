@@ -1,0 +1,24 @@
+{
+  "name": "nws-js",
+  "version": "0.0.1",
+  "description": "JavaScript client for the National Weather Service API",
+  "keywords": [
+    "National Weather Service",
+    "nws",
+    "weather"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TravisYeah/nws-js.git"
+  },
+  "author": "Travis Harrison <TravisHarrisonYeah@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TravisYeah/nws-js/issues"
+  },
+  "homepage": "https://github.com/TravisYeah/nws-js#readme"
+}

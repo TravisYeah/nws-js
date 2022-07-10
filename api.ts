@@ -13,7 +13,7 @@
  */
 
 import * as url from "url";
-import * as isomorphicFetch from "isomorphic-fetch";
+import { default as isomorphicFetch } from "isomorphic-fetch";
 import { Configuration } from "./configuration";
 
 const BASE_PATH = "https://api.weather.gov".replace(/\/+$/, "");
@@ -727,7 +727,7 @@ export interface AlertXMLParameter {
  * @export
  * @interface AreaCode
  */
-export interface AreaCode {}
+export type AreaCode = StateTerritoryCode | MarineAreaCode;
 /**
  *
  * @export
@@ -6626,6 +6626,7 @@ export const DefaultApiFp = function (configuration?: Configuration) {
         fetch: FetchAPI = isomorphicFetch,
         basePath: string = BASE_PATH
       ) => {
+        console.log(fetch);
         return fetch(
           basePath + localVarFetchArgs.url,
           localVarFetchArgs.options

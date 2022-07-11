@@ -13,8 +13,10 @@
  */
 
 import * as url from "url";
-import { default as isomorphicFetch } from "isomorphic-fetch";
+import "isomorphic-fetch";
 import { Configuration } from "./configuration";
+
+const isomorphicFetch = fetch;
 
 const BASE_PATH = "https://api.weather.gov".replace(/\/+$/, "");
 
@@ -6626,7 +6628,6 @@ export const DefaultApiFp = function (configuration?: Configuration) {
         fetch: FetchAPI = isomorphicFetch,
         basePath: string = BASE_PATH
       ) => {
-        console.log(fetch);
         return fetch(
           basePath + localVarFetchArgs.url,
           localVarFetchArgs.options

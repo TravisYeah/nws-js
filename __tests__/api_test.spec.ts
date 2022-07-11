@@ -10,10 +10,9 @@
  * Do not edit the file manually.
  */
 
-import * as api from "./api";
-import { AreaCode, StateTerritoryCode } from "./api";
-import { Configuration } from "./configuration";
-import "isomorphic-fetch";
+import * as api from "../src/api";
+import { AreaCode, StateTerritoryCode } from "../src/api";
+import { Configuration } from "../src/configuration";
 
 const config: Configuration = {};
 

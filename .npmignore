@@ -1,0 +1,5 @@
+node_modules
+api_test.spec.ts
+api.ts
+.gitignore
+.parcel-cache

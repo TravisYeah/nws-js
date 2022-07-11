@@ -1,6 +1,6 @@
 {
   "name": "nws-client-js",
-  "version": "0.0.1-2",
+  "version": "0.0.1-3",
   "description": "JavaScript client for the National Weather Service API",
   "keywords": [
     "National Weather Service",

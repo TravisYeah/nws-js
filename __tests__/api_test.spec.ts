@@ -11,12 +11,19 @@
  */
 
 import * as api from "../src/api";
-import { AreaCode, StateTerritoryCode } from "../src/api";
+import {
+  AreaCode,
+  NWSForecastOfficeId,
+  PointString,
+  StateTerritoryCode,
+} from "../src/api";
 import { Configuration } from "../src/configuration";
 
 const config: Configuration = {};
 
 const timestampRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\+|-)\d{2}:\d{2}/;
+const ISO8601IntervalISO8601IntervalRegex =
+  /(^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:?\d{2}?)|NOW)\/(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:?\d{2}?)|NOW)$)|(^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:?\d{2}?)|NOW)\/P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?$)|(^P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?\/(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:?\d{2}?)|NOW)$)/;
 
 describe("DefaultApi", () => {
   let instance: api.DefaultApi;
@@ -114,14 +121,67 @@ describe("DefaultApi", () => {
   //   const y: number = 56
   //   return expect(instance.gridpoint(wfo, x, y, {})).resolves.toStrictEqual(null)
   // })
-  // test("gridpointForecast", () => {
-  //   const wfo: NWSForecastOfficeId = undefined
-  //   const x: number = 56
-  //   const y: number = 56
-  //   const featureFlags: Array<string> = undefined
-  //   const units: GridpointForecastUnits = undefined
-  //   return expect(instance.gridpointForecast(wfo, x, y, featureFlags, units, {})).resolves.toStrictEqual(null)
-  // })
+  test("gridpointForecast", () => {
+    const wfo: NWSForecastOfficeId = NWSForecastOfficeId.LWX;
+    const x: number = 96;
+    const y: number = 70;
+    return expect(
+      instance.gridpointForecast(wfo, x, y, undefined, undefined, {})
+    ).resolves.toStrictEqual({
+      "@context": [
+        "https://geojson.org/geojson-ld/geojson-context.jsonld",
+        {
+          "@version": "1.1",
+          wx: "https://api.weather.gov/ontology#",
+          geo: "http://www.opengis.net/ont/geosparql#",
+          unit: "http://codes.wmo.int/common/unit/",
+          "@vocab": "https://api.weather.gov/ontology#",
+        },
+      ],
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [-77.036996200000004, 38.900789000000003],
+            [-77.040754800000002, 38.878836500000006],
+            [-77.012551900000005, 38.875908600000002],
+            [-77.008787600000005, 38.897860800000004],
+            [-77.036996200000004, 38.900789000000003],
+          ],
+        ],
+      },
+      properties: {
+        updated: expect.stringMatching(timestampRegex),
+        units: "us",
+        forecastGenerator: "BaselineForecastGenerator",
+        generatedAt: expect.stringMatching(timestampRegex),
+        updateTime: expect.stringMatching(timestampRegex),
+        validTimes: expect.stringMatching(ISO8601IntervalISO8601IntervalRegex),
+        elevation: {
+          unitCode: "wmoUnit:m",
+          value: expect.any(Number),
+        },
+        periods: expect.arrayContaining([
+          expect.objectContaining({
+            number: expect.any(Number),
+            name: expect.any(String),
+            startTime: expect.stringMatching(timestampRegex),
+            endTime: expect.stringMatching(timestampRegex),
+            isDaytime: expect.any(Boolean),
+            temperature: expect.any(Number),
+            temperatureUnit: "F",
+            temperatureTrend: expect.any(Object),
+            windSpeed: expect.any(String),
+            windDirection: expect.any(String),
+            icon: expect.any(String),
+            shortForecast: expect.any(String),
+            detailedForecast: expect.any(String),
+          }),
+        ]),
+      },
+    });
+  });
   // test("gridpointForecastHourly", () => {
   //   const wfo: NWSForecastOfficeId = undefined
   //   const x: number = 56
@@ -183,10 +243,57 @@ describe("DefaultApi", () => {
   //   const officeId: NWSForecastOfficeId = undefined
   //   return expect(instance.officeHeadlines(officeId, {})).resolves.toStrictEqual(null)
   // })
-  // test("point", () => {
-  //   const point: PointString = undefined
-  //   return expect(instance.point(point, {})).resolves.toStrictEqual(null)
-  // })
+  test("point", () => {
+    const point: PointString = "38.8894,-77.0352";
+    return expect(instance.point(point, {})).resolves.toStrictEqual({
+      "@context": expect.any(Array),
+      id: "https://api.weather.gov/points/38.8894,-77.0352",
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [-77.035200000000003, 38.889400000000002],
+      },
+      properties: {
+        "@id": "https://api.weather.gov/points/38.8894,-77.0352",
+        "@type": "wx:Point",
+        cwa: "LWX",
+        forecastOffice: "https://api.weather.gov/offices/LWX",
+        gridId: "LWX",
+        gridX: 97,
+        gridY: 71,
+        forecast: "https://api.weather.gov/gridpoints/LWX/97,71/forecast",
+        forecastHourly:
+          "https://api.weather.gov/gridpoints/LWX/97,71/forecast/hourly",
+        forecastGridData: "https://api.weather.gov/gridpoints/LWX/97,71",
+        observationStations:
+          "https://api.weather.gov/gridpoints/LWX/97,71/stations",
+        relativeLocation: {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [-77.017229, 38.904102999999999],
+          },
+          properties: {
+            city: "Washington",
+            state: "DC",
+            distance: {
+              unitCode: "wmoUnit:m",
+              value: expect.any(Number),
+            },
+            bearing: {
+              unitCode: "wmoUnit:degree_(angle)",
+              value: expect.any(Number),
+            },
+          },
+        },
+        forecastZone: "https://api.weather.gov/zones/forecast/DCZ001",
+        county: "https://api.weather.gov/zones/county/DCC001",
+        fireWeatherZone: "https://api.weather.gov/zones/fire/DCZ001",
+        timeZone: "America/New_York",
+        radarStation: "KLWX",
+      },
+    });
+  });
   // test("pointStations", () => {
   //   const point: PointString = undefined
   //   return expect(instance.pointStations(point, {})).resolves.toStrictEqual(null)
